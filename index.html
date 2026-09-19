@@ -472,12 +472,12 @@
         <input type="text" id="nom" placeholder="Prénom et nom" autocomplete="name" style="text-transform:uppercase;" />
 
         <label for="cni">Numéro de carte d'identité (CNI)</label>
-        <input type="text" id="cni" placeholder="Numéro de la carte d'identité" />
+        <input type="text" id="cni" inputmode="numeric" maxlength="17" placeholder="13 à 17 chiffres" />
         <div class="hint">Une seule confirmation est conservée par numéro de CNI ; une nouvelle soumission remplace la précédente.</div>
         <p class="hint" id="dup-warning" style="display:none;color:#1B3B6B;background:var(--accent-soft);border:1px solid var(--accent);border-radius:8px;padding:8px 10px;margin-top:8px;"></p>
 
         <label for="carte-electeur">Numéro de carte d'électeur <span style="font-weight:400;color:#9AA1B0;">(optionnel)</span></label>
-        <input type="text" id="carte-electeur" placeholder="Numéro de la carte d'électeur (facultatif)" />
+        <input type="text" id="carte-electeur" inputmode="numeric" maxlength="17" placeholder="13 à 17 chiffres (facultatif)" />
 
         <label for="quartier">Quartier / Adresse</label>
         <input type="text" id="quartier" placeholder="Ex : Quartier, ville" />
@@ -708,7 +708,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
 // 1) Collez ici l'URL de votre déploiement Google Apps Script (voir Code.gs fourni).
 // 2) Le code d'accès n'est plus stocké ici : il est saisi à l'écran et vérifié côté
 //    serveur (voir la constante SECRET dans Code.gs).
-const API_URL = "https://script.google.com/macros/s/AKfycbzH7lwhpN1wWQ06-4m33FgaVsQXzmJCUCSMRTekyb-cVLvXWmvZLd-iQv__if6n-4qH/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbxuKFIJGuvxwYnOnHnzkK4L8vZztfDGOU7YMtPQyCKozKXKJ9hFDokYpAuG_uwGVHuD/exec";
 // Doit correspondre exactement à MONTANT_COTISATION dans Code.gs.
 const MONTANT_COTISATION = 1000;
 document.getElementById('montant-label').textContent = 'Paiement de la cotisation (' + MONTANT_COTISATION + ' FCFA)';
@@ -915,11 +915,24 @@ function validateStep(n){
   if(n === 1){
     const nom = document.getElementById('nom').value.trim();
     const cni = document.getElementById('cni').value.trim();
+    const carteElecteur = document.getElementById('carte-electeur').value.trim();
     const quartier = document.getElementById('quartier').value.trim();
     const telephone = document.getElementById('tel').value.trim();
     if(!nom || !cni || !quartier || !telephone){
       alert('Merci de renseigner votre nom, votre CNI, votre quartier et votre téléphone avant de continuer.');
       return false;
+    }
+    const cniDigits = cni.replace(/\D/g, '');
+    if(cniDigits.length !== cni.length || cniDigits.length < 13 || cniDigits.length > 17){
+      alert("Le numéro de CNI doit contenir uniquement des chiffres, entre 13 chiffres (ancienne carte numérisée) et 17 chiffres (carte biométrique CEDEAO).");
+      return false;
+    }
+    if(carteElecteur){
+      const carteDigits = carteElecteur.replace(/\D/g, '');
+      if(carteDigits.length !== carteElecteur.length || carteDigits.length < 13 || carteDigits.length > 17){
+        alert("Le numéro de carte d'électeur doit contenir uniquement des chiffres, entre 13 et 17 chiffres.");
+        return false;
+      }
     }
   }
   if(n === 2){
