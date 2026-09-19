@@ -714,7 +714,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
 // 1) Collez ici l'URL de votre déploiement Google Apps Script (voir Code.gs fourni).
 // 2) Le code d'accès n'est plus stocké ici : il est saisi à l'écran et vérifié côté
 //    serveur (voir la constante SECRET dans Code.gs).
-const API_URL = ""https://script.google.com/macros/s/AKfycbzTPtdn93TP-LeM4HC0Az4VNOv8uXnl2iUgJhoZhyK69n1v4Cx87mF7cGTqtWWF8Ou6Xw/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbyjEaV1ioNxqBkWbu87zgbzcbKvy32r9x9d3JsWohKhvsuWMG-DlLcxNTubzDfT45NI/exec";
 // Doit correspondre exactement à MONTANT_COTISATION dans Code.gs.
 const MONTANT_COTISATION = 1000;
 document.getElementById('montant-label').textContent = 'Paiement de la cotisation (' + MONTANT_COTISATION + ' FCFA)';
@@ -755,15 +755,27 @@ document.querySelectorAll('.accord-opt').forEach(opt=>{
 
 // ---------- SIGNATURE PAD ----------
 // Empêche le navigateur de proposer une ancienne valeur enregistrée (ex. un nom/numéro
-// saisi lors d'un test précédent) : attribut name aléatoire + vidage forcé au chargement.
+// saisi lors d'un test précédent). Chrome ignore souvent autocomplete="off" pour les
+// champs qu'il détecte comme nom/téléphone ; "new-password" est plus efficace pour le
+// bloquer. Comme Chrome peut autoremplir juste APRÈS l'exécution de ce script, on
+// revide aussi les champs à plusieurs reprises après le chargement de la page.
 (function neutraliserAutocompletion(){
-  ['nom','tel','cni','carte-electeur'].forEach(id=>{
-    const el = document.getElementById(id);
-    if(!el) return;
-    el.setAttribute('autocomplete', 'off');
-    el.setAttribute('name', id + '-' + Math.random().toString(36).slice(2));
-    el.value = '';
-  });
+  const champs = ['nom','tel','cni','carte-electeur'];
+  function reset(){
+    champs.forEach(id=>{
+      const el = document.getElementById(id);
+      if(!el || document.activeElement === el) return;
+      el.setAttribute('autocomplete', 'new-password');
+      if(!el.dataset.autofillGuardName){
+        el.dataset.autofillGuardName = id + '-' + Math.random().toString(36).slice(2);
+      }
+      el.setAttribute('name', el.dataset.autofillGuardName);
+      el.value = '';
+    });
+  }
+  reset();
+  window.addEventListener('load', reset);
+  [0, 100, 300, 800, 1500].forEach(delay => setTimeout(reset, delay));
 })();
 
 const canvas = document.getElementById('sigpad');
