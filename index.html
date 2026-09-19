@@ -455,6 +455,9 @@
     <div id="form-card" class="card">
       <p class="doc-title">Plate-forme Digitale d'adhésion en masse au Parti Tabax Construire</p>
       <p class="doc-sub">Merci de renseigner vos informations pour confirmer votre adhésion en masse au Parti Tabax Construire.</p>
+      <div style="text-align:right;margin-top:-6px;">
+        <button type="button" id="open-workspace-btn" style="background:none;border:none;color:#B7BDC9;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.04em;cursor:pointer;padding:4px;opacity:.55;transition:opacity .15s;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.55">Espace responsable</button>
+      </div>
 
       <div class="stepper-track" id="stepper-track">
         <div class="stepper-dot active" data-dot="1">1</div><div class="stepper-line"></div>
@@ -469,7 +472,7 @@
         <p class="step-title">1. Vos informations personnelles</p>
 
         <label for="nom">Nom complet</label>
-        <input type="text" id="nom" placeholder="Prénom et nom" autocomplete="name" style="text-transform:uppercase;" />
+        <input type="text" id="nom" placeholder="Prénom et nom" autocomplete="off" style="text-transform:uppercase;" />
 
         <label for="cni">Numéro de carte d'identité (CNI)</label>
         <input type="text" id="cni" inputmode="numeric" maxlength="13" placeholder="13 chiffres" />
@@ -483,7 +486,9 @@
         <input type="text" id="quartier" placeholder="Ex : Quartier, ville" />
 
         <label for="tel">Téléphone</label>
-        <input type="tel" id="tel" placeholder="Ex : 77 123 45 67" />
+        <input type="tel" id="tel" inputmode="numeric" maxlength="9" autocomplete="off" placeholder="9 chiffres, ex : 771234567" />
+
+        <p class="error-msg" id="error-msg-step1"></p>
 
         <div class="step-nav">
           <span></span>
@@ -506,6 +511,8 @@
 
         <label for="responsable-local">Responsable du comité local</label>
         <input type="text" id="responsable-local" placeholder="Nom du responsable / coordinateur de votre comité" />
+
+        <p class="error-msg" id="error-msg-step2"></p>
 
         <div class="step-nav">
           <button type="button" class="btn-ghost step-prev" data-prev="1">Précédent</button>
@@ -558,8 +565,7 @@
             <div class="sig-baseline"></div>
           </div>
           <p class="sig-caption">Signez ci-dessus avec le doigt ou la souris</p>
-          <div class="sig-controls" style="justify-content:space-between;">
-            <button type="button" id="open-workspace-btn" style="background:none;border:none;color:#B7BDC9;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.04em;cursor:pointer;padding:4px;opacity:.45;transition:opacity .15s;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.45">Espace responsable</button>
+          <div class="sig-controls" style="justify-content:flex-end;">
             <button type="button" class="btn-ghost" id="clear-sig">Effacer la signature</button>
           </div>
         </div>
@@ -918,19 +924,31 @@ function validateStep(n){
     const carteElecteur = document.getElementById('carte-electeur').value.trim();
     const quartier = document.getElementById('quartier').value.trim();
     const telephone = document.getElementById('tel').value.trim();
+    const errEl = document.getElementById('error-msg-step1');
+    errEl.style.display = 'none';
+
     if(!nom || !cni || !quartier || !telephone){
-      alert('Merci de renseigner votre nom, votre CNI, votre quartier et votre téléphone avant de continuer.');
+      errEl.textContent = 'Merci de renseigner votre nom, votre CNI, votre quartier et votre téléphone avant de continuer.';
+      errEl.style.display = 'block';
       return false;
     }
     const cniDigits = cni.replace(/\D/g, '');
     if(cniDigits.length !== cni.length || cniDigits.length !== 13){
-      alert("Le numéro de CNI doit contenir exactement 13 chiffres.");
+      errEl.textContent = 'Le numéro de CNI doit contenir exactement 13 chiffres.';
+      errEl.style.display = 'block';
+      return false;
+    }
+    const telDigits = telephone.replace(/\D/g, '');
+    if(telDigits.length !== telephone.length || telDigits.length !== 9){
+      errEl.textContent = 'Le numéro de téléphone doit contenir exactement 9 chiffres (ex : 771234567).';
+      errEl.style.display = 'block';
       return false;
     }
     if(carteElecteur){
       const carteDigits = carteElecteur.replace(/\D/g, '');
       if(carteDigits.length !== carteElecteur.length || carteDigits.length !== 9){
-        alert("Le numéro de carte d'électeur doit contenir exactement 9 chiffres.");
+        errEl.textContent = "Le numéro de carte d'électeur doit contenir exactement 9 chiffres.";
+        errEl.style.display = 'block';
         return false;
       }
     }
@@ -940,8 +958,11 @@ function validateStep(n){
     const centreVote = document.getElementById('centre-vote').value.trim();
     const bureauVote = document.getElementById('bureau-vote').value.trim();
     const responsableLocal = document.getElementById('responsable-local').value.trim();
+    const errEl2 = document.getElementById('error-msg-step2');
+    errEl2.style.display = 'none';
     if(!communeVote || !centreVote || !bureauVote || !responsableLocal){
-      alert('Merci de renseigner votre commune, centre et bureau de vote ainsi que le responsable de votre comité avant de continuer.');
+      errEl2.textContent = 'Merci de renseigner votre commune, centre et bureau de vote ainsi que le responsable de votre comité avant de continuer.';
+      errEl2.style.display = 'block';
       return false;
     }
   }
