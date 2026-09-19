@@ -463,8 +463,7 @@
         <div class="stepper-dot active" data-dot="1">1</div><div class="stepper-line"></div>
         <div class="stepper-dot" data-dot="2">2</div><div class="stepper-line"></div>
         <div class="stepper-dot" data-dot="3">3</div><div class="stepper-line"></div>
-        <div class="stepper-dot" data-dot="4">4</div><div class="stepper-line"></div>
-        <div class="stepper-dot" data-dot="5">5</div>
+        <div class="stepper-dot" data-dot="4">4</div>
       </div>
 
       <!-- ÉTAPE 1 — IDENTITÉ -->
@@ -574,7 +573,7 @@
 
         <div class="step-nav">
           <button type="button" class="btn-ghost step-prev" data-prev="3">Précédent</button>
-          <button type="button" class="btn-primary step-next" id="step4-next" data-next="5" style="width:auto;padding:10px 22px;">Suivant</button>
+          <button type="button" class="btn-primary" id="step4-next" style="width:auto;padding:10px 22px;">Confirmer et envoyer</button>
         </div>
       </div>
 
@@ -761,7 +760,9 @@ document.querySelectorAll('.accord-opt').forEach(opt=>{
 // revide aussi les champs à plusieurs reprises après le chargement de la page.
 (function neutraliserAutocompletion(){
   const champs = ['nom','tel','cni','carte-electeur'];
+  let userInteracted = false;
   function reset(){
+    if(userInteracted) return; // la personne a déjà commencé à remplir le formulaire : on ne touche plus à rien.
     champs.forEach(id=>{
       const el = document.getElementById(id);
       if(!el || document.activeElement === el) return;
@@ -773,9 +774,15 @@ document.querySelectorAll('.accord-opt').forEach(opt=>{
       el.value = '';
     });
   }
+  champs.forEach(id=>{
+    const el = document.getElementById(id);
+    if(!el) return;
+    el.addEventListener('input', ()=>{ userInteracted = true; }, { once:true });
+    el.addEventListener('focus', ()=>{ userInteracted = true; }, { once:true });
+  });
   reset();
   window.addEventListener('load', reset);
-  [0, 100, 300, 800, 1500].forEach(delay => setTimeout(reset, delay));
+  [0, 100, 300].forEach(delay => setTimeout(reset, delay));
 })();
 
 const canvas = document.getElementById('sigpad');
@@ -1016,6 +1023,25 @@ document.querySelectorAll('.step-prev').forEach(btn=>{
   });
 });
 
+// ---------- CONFIRMATION DIRECTE (paiement désactivé pour le moment) ----------
+document.getElementById('step4-next').addEventListener('click', async ()=>{
+  if(!validateStep(4)) return;
+  const record = buildPendingRecord();
+  if(!record) return;
+
+  const btn = document.getElementById('step4-next');
+  btn.disabled = true; btn.textContent = 'Envoi en cours…';
+
+  record.modePaiement = 'Gratuit';
+  record.referencePaiement = 'N/A';
+  record.montantPaiement = 0;
+  record.statutPaiement = 'Gratuit';
+
+  await finalizeSubmission(record);
+
+  btn.disabled = false; btn.textContent = 'Confirmer et envoyer';
+});
+
 // ---------- CONSTRUCTION DU DOSSIER (avant paiement) ----------
 function buildPendingRecord(){
   const nom = document.getElementById('nom').value.trim().toUpperCase();
@@ -1032,7 +1058,7 @@ function buildPendingRecord(){
   errorEl.style.display='none';
 
   if(!nom || !cni || !quartier || !telephone || !communeVote || !centreVote || !bureauVote || !responsableLocal || !accordEl || !hasSignature){
-    errorEl.textContent = 'Merci de remplir tous les champs et de signer avant de procéder au paiement.';
+    errorEl.textContent = 'Merci de remplir tous les champs et de signer avant de confirmer.';
     errorEl.style.display='block';
     return null;
   }
