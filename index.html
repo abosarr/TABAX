@@ -455,6 +455,9 @@
     <div id="form-card" class="card">
       <p class="doc-title">Plate-forme Digitale d'adhésion en masse au Parti Tabax Construire</p>
       <p class="doc-sub">Merci de renseigner vos informations pour confirmer votre adhésion en masse au Parti Tabax Construire.</p>
+      <div style="text-align:right;margin-top:-6px;">
+        <button type="button" id="open-workspace-btn" style="background:none;border:none;color:#B7BDC9;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.04em;cursor:pointer;padding:4px;opacity:.55;transition:opacity .15s;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.55">Espace responsable</button>
+      </div>
 
       <div class="stepper-track" id="stepper-track">
         <div class="stepper-dot active" data-dot="1">1</div><div class="stepper-line"></div>
@@ -558,8 +561,7 @@
             <div class="sig-baseline"></div>
           </div>
           <p class="sig-caption">Signez ci-dessus avec le doigt ou la souris</p>
-          <div class="sig-controls" style="justify-content:space-between;">
-            <button type="button" id="open-workspace-btn" style="background:none;border:none;color:#B7BDC9;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.04em;cursor:pointer;padding:4px;opacity:.45;transition:opacity .15s;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.45">Espace responsable</button>
+          <div class="sig-controls" style="justify-content:flex-end;">
             <button type="button" class="btn-ghost" id="clear-sig">Effacer la signature</button>
           </div>
         </div>
@@ -708,7 +710,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
 // 1) Collez ici l'URL de votre déploiement Google Apps Script (voir Code.gs fourni).
 // 2) Le code d'accès n'est plus stocké ici : il est saisi à l'écran et vérifié côté
 //    serveur (voir la constante SECRET dans Code.gs).
-const API_URL = "https://script.google.com/macros/s/AKfycbzTPtdn93TP-LeM4HC0Az4VNOv8uXnl2iUgJhoZhyK69n1v4Cx87mF7cGTqtWWF8Ou6Xw/exec";
+const API_URL = ""https://script.google.com/macros/s/AKfycbzTPtdn93TP-LeM4HC0Az4VNOv8uXnl2iUgJhoZhyK69n1v4Cx87mF7cGTqtWWF8Ou6Xw/exec";";
 // Doit correspondre exactement à MONTANT_COTISATION dans Code.gs.
 const MONTANT_COTISATION = 1000;
 document.getElementById('montant-label').textContent = 'Paiement de la cotisation (' + MONTANT_COTISATION + ' FCFA)';
