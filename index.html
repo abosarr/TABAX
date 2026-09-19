@@ -472,12 +472,20 @@
       <label for="responsable-local">Responsable du comité local</label>
       <input type="text" id="responsable-local" placeholder="Nom du responsable / coordinateur de votre comité" />
 
-      <label for="photo">Photo (pour la carte de membre) <span style="font-weight:400;color:#9AA1B0;">(optionnel)</span></label>
-      <input type="file" id="photo" accept="image/*" capture="user" />
+      <label>Photo (pour la carte de membre) <span style="font-weight:400;color:#9AA1B0;">(optionnel)</span></label>
+      <button type="button" id="photo-start-btn" class="btn-export" style="width:100%;">📷 Prendre la photo</button>
+      <div id="photo-camera-wrap" style="display:none;margin-top:8px;text-align:center;">
+        <video id="photo-video" autoplay playsinline muted style="width:100%;max-width:220px;border-radius:8px;background:#000;"></video>
+        <div style="margin-top:8px;display:flex;gap:8px;justify-content:center;">
+          <button type="button" id="photo-snap-btn" class="btn-primary" style="padding:8px 16px;">Capturer</button>
+          <button type="button" id="photo-cancel-btn" class="btn-export" style="padding:8px 16px;">Annuler</button>
+        </div>
+      </div>
       <div id="photo-preview-wrap" style="display:none;margin-top:8px;text-align:center;">
         <img id="photo-preview" style="width:96px;height:120px;object-fit:cover;border-radius:8px;border:1px solid var(--hairline);" />
-        <div><button type="button" id="photo-remove-btn" class="btn-export" style="margin-top:6px;padding:4px 10px;font-size:12px;">Retirer la photo</button></div>
+        <div><button type="button" id="photo-remove-btn" class="btn-export" style="margin-top:6px;padding:4px 10px;font-size:12px;">Reprendre la photo</button></div>
       </div>
+      <p class="hint" id="photo-error" style="color:#A23E34;display:none;"></p>
 
       <label>Adhésion au parti</label>
       <div class="accord-group">
@@ -619,7 +627,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
 // 1) Collez ici l'URL de votre déploiement Google Apps Script (voir Code.gs fourni).
 // 2) Le code d'accès n'est plus stocké ici : il est saisi à l'écran et vérifié côté
 //    serveur (voir la constante SECRET dans Code.gs).
-const API_URL = "https://script.google.com/macros/s/AKfycbz6vJxk7J9dsLLLKiiy4nd9oEX7oG4s3eRlZJFXZIA2Ww2O94RUnbQQFAkCmeMHAvTq/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbxmtZYc0hs9ML5igro92MlHocsUmCJD0mZFTJmUKuVbhdYXcS1MgAmiqFRorZvXw_W4/exec";
 let sessionSecret = "ICAM2026";
 
 // ---------- TABS ----------
@@ -708,36 +716,70 @@ document.getElementById('clear-sig').addEventListener('click', ()=>{
   hasSignature = false;
 });
 
-// ---------- PHOTO (CARTE DE MEMBRE) ----------
+// ---------- PHOTO (CARTE DE MEMBRE) — capture caméra uniquement ----------
 let photoDataUrl = '';
-const photoInput = document.getElementById('photo');
-photoInput.addEventListener('change', ()=>{
-  const file = photoInput.files[0];
-  if(!file){ return; }
-  const reader = new FileReader();
-  reader.onload = () => {
-    const img = new Image();
-    img.onload = () => {
-      // Redimensionne côté client (format portrait, ~480px de large max) pour garder un fichier léger.
-      const maxW = 480, maxH = 600;
-      let w = img.width, h = img.height;
-      const ratio = Math.min(maxW / w, maxH / h, 1);
-      w = Math.round(w * ratio); h = Math.round(h * ratio);
-      const canvasP = document.createElement('canvas');
-      canvasP.width = w; canvasP.height = h;
-      canvasP.getContext('2d').drawImage(img, 0, 0, w, h);
-      photoDataUrl = canvasP.toDataURL('image/jpeg', 0.82);
-      document.getElementById('photo-preview').src = photoDataUrl;
-      document.getElementById('photo-preview-wrap').style.display = 'block';
-    };
-    img.src = reader.result;
-  };
-  reader.readAsDataURL(file);
+let photoStream = null;
+const photoVideo = document.getElementById('photo-video');
+const photoErrorEl = document.getElementById('photo-error');
+
+function showPhotoError(msg){
+  photoErrorEl.textContent = msg;
+  photoErrorEl.style.display = 'block';
+}
+function hidePhotoError(){
+  photoErrorEl.style.display = 'none';
+}
+function stopPhotoStream(){
+  if(photoStream){
+    photoStream.getTracks().forEach(t => t.stop());
+    photoStream = null;
+  }
+}
+
+document.getElementById('photo-start-btn').addEventListener('click', async ()=>{
+  hidePhotoError();
+  if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
+    showPhotoError("La prise de photo n'est pas prise en charge par ce navigateur.");
+    return;
+  }
+  try{
+    photoStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: false });
+    photoVideo.srcObject = photoStream;
+    document.getElementById('photo-start-btn').style.display = 'none';
+    document.getElementById('photo-preview-wrap').style.display = 'none';
+    document.getElementById('photo-camera-wrap').style.display = 'block';
+  }catch(err){
+    showPhotoError("Impossible d'accéder à la caméra. Vérifiez que l'accès à la caméra est autorisé pour ce site.");
+  }
 });
+
+document.getElementById('photo-snap-btn').addEventListener('click', ()=>{
+  // Redimensionne côté client (format portrait, ~480px de large max) pour garder un fichier léger.
+  const maxW = 480, maxH = 600;
+  let w = photoVideo.videoWidth, h = photoVideo.videoHeight;
+  if(!w || !h){ return; }
+  const ratio = Math.min(maxW / w, maxH / h, 1);
+  w = Math.round(w * ratio); h = Math.round(h * ratio);
+  const canvasP = document.createElement('canvas');
+  canvasP.width = w; canvasP.height = h;
+  canvasP.getContext('2d').drawImage(photoVideo, 0, 0, w, h);
+  photoDataUrl = canvasP.toDataURL('image/jpeg', 0.82);
+  document.getElementById('photo-preview').src = photoDataUrl;
+  stopPhotoStream();
+  document.getElementById('photo-camera-wrap').style.display = 'none';
+  document.getElementById('photo-preview-wrap').style.display = 'block';
+});
+
+document.getElementById('photo-cancel-btn').addEventListener('click', ()=>{
+  stopPhotoStream();
+  document.getElementById('photo-camera-wrap').style.display = 'none';
+  document.getElementById('photo-start-btn').style.display = 'block';
+});
+
 document.getElementById('photo-remove-btn').addEventListener('click', ()=>{
   photoDataUrl = '';
-  photoInput.value = '';
   document.getElementById('photo-preview-wrap').style.display = 'none';
+  document.getElementById('photo-start-btn').style.display = 'block';
 });
 
 // ---------- CHECK DUPLICATE CNI ----------
@@ -850,8 +892,11 @@ document.getElementById('new-entry-btn').addEventListener('click', ()=>{
   document.getElementById('comite-local').value='';
   document.getElementById('responsable-local').value='';
   photoDataUrl = '';
-  photoInput.value = '';
+  stopPhotoStream();
+  document.getElementById('photo-camera-wrap').style.display = 'none';
   document.getElementById('photo-preview-wrap').style.display = 'none';
+  document.getElementById('photo-start-btn').style.display = 'block';
+  hidePhotoError();
   document.querySelectorAll('.accord-opt').forEach(o=>o.classList.remove('checked'));
   document.querySelectorAll('input[name=accord]').forEach(i=>i.checked=false);
   ctx.clearRect(0,0,canvas.width,canvas.height);
