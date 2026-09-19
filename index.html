@@ -472,12 +472,12 @@
         <input type="text" id="nom" placeholder="Prénom et nom" autocomplete="name" style="text-transform:uppercase;" />
 
         <label for="cni">Numéro de carte d'identité (CNI)</label>
-        <input type="text" id="cni" inputmode="numeric" maxlength="17" placeholder="13 à 17 chiffres" />
+        <input type="text" id="cni" inputmode="numeric" maxlength="13" placeholder="13 chiffres" />
         <div class="hint">Une seule confirmation est conservée par numéro de CNI ; une nouvelle soumission remplace la précédente.</div>
         <p class="hint" id="dup-warning" style="display:none;color:#1B3B6B;background:var(--accent-soft);border:1px solid var(--accent);border-radius:8px;padding:8px 10px;margin-top:8px;"></p>
 
         <label for="carte-electeur">Numéro de carte d'électeur <span style="font-weight:400;color:#9AA1B0;">(optionnel)</span></label>
-        <input type="text" id="carte-electeur" inputmode="numeric" maxlength="17" placeholder="13 à 17 chiffres (facultatif)" />
+        <input type="text" id="carte-electeur" inputmode="numeric" maxlength="9" placeholder="9 chiffres (facultatif)" />
 
         <label for="quartier">Quartier / Adresse</label>
         <input type="text" id="quartier" placeholder="Ex : Quartier, ville" />
@@ -923,14 +923,14 @@ function validateStep(n){
       return false;
     }
     const cniDigits = cni.replace(/\D/g, '');
-    if(cniDigits.length !== cni.length || cniDigits.length < 13 || cniDigits.length > 17){
-      alert("Le numéro de CNI doit contenir uniquement des chiffres, entre 13 chiffres (ancienne carte numérisée) et 17 chiffres (carte biométrique CEDEAO).");
+    if(cniDigits.length !== cni.length || cniDigits.length !== 13){
+      alert("Le numéro de CNI doit contenir exactement 13 chiffres.");
       return false;
     }
     if(carteElecteur){
       const carteDigits = carteElecteur.replace(/\D/g, '');
-      if(carteDigits.length !== carteElecteur.length || carteDigits.length < 13 || carteDigits.length > 17){
-        alert("Le numéro de carte d'électeur doit contenir uniquement des chiffres, entre 13 et 17 chiffres.");
+      if(carteDigits.length !== carteElecteur.length || carteDigits.length !== 9){
+        alert("Le numéro de carte d'électeur doit contenir exactement 9 chiffres.");
         return false;
       }
     }
