@@ -463,7 +463,8 @@
         <div class="stepper-dot active" data-dot="1">1</div><div class="stepper-line"></div>
         <div class="stepper-dot" data-dot="2">2</div><div class="stepper-line"></div>
         <div class="stepper-dot" data-dot="3">3</div><div class="stepper-line"></div>
-        <div class="stepper-dot" data-dot="4">4</div>
+        <div class="stepper-dot" data-dot="4">4</div><div class="stepper-line"></div>
+        <div class="stepper-dot" data-dot="5">5</div>
       </div>
 
       <!-- ÉTAPE 1 — IDENTITÉ -->
@@ -573,32 +574,20 @@
 
         <div class="step-nav">
           <button type="button" class="btn-ghost step-prev" data-prev="3">Précédent</button>
-          <button type="button" class="btn-primary" id="step4-next" style="width:auto;padding:10px 22px;">Confirmer et envoyer</button>
+          <button type="button" class="btn-primary step-next" data-next="5" style="width:auto;padding:10px 22px;">Suivant</button>
         </div>
       </div>
 
       <!-- ÉTAPE 5 — PAIEMENT -->
       <div class="form-step" data-step="5">
-        <p class="step-title">5. Paiement de la cotisation</p>
+        <p class="step-title">5. Validation de l'adhésion</p>
 
-        <div class="submit-row" style="flex-direction:column;align-items:stretch;">
-          <label style="margin-bottom:4px;" id="montant-label">Paiement de la cotisation</label>
-          <button class="btn-primary" id="pay-wave-btn" style="background:#1DC8E0;width:100%;margin-bottom:8px;display:flex;align-items:center;justify-content:center;gap:8px;">
-            <img src="data:image/jpeg;base64,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" alt="Wave" style="height:26px;width:auto;border-radius:5px;flex-shrink:0;" />
-            <span class="btn-label">Payer avec Wave</span>
-          </button>
-          <button class="btn-primary" id="pay-orange-btn" style="background:#FF7900;width:100%;display:flex;align-items:center;justify-content:center;gap:8px;">
-            <img src="data:image/png;base64,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" alt="Orange Money" style="height:26px;width:auto;background:#fff;border-radius:5px;padding:2px 4px;flex-shrink:0;" />
-            <span class="btn-label">Payer avec Orange Money</span>
-          </button>
-          <button type="button" class="btn-ghost" id="pay-free-btn" style="width:100%;margin-top:10px;">Adhésion gratuite (sans paiement)</button>
-          <p class="hint" id="payment-status" style="display:none;margin-top:8px;"></p>
-          <p class="error-msg" id="error-msg"></p>
-        </div>
+        <p class="hint">Vérifiez vos informations puis validez votre adhésion au Parti Tabax Construire.</p>
+        <p class="error-msg" id="error-msg"></p>
 
         <div class="step-nav">
           <button type="button" class="btn-ghost step-prev" data-prev="4">Précédent</button>
-          <span></span>
+          <button type="button" class="btn-primary" id="valider-adhesion-btn" style="width:auto;padding:10px 22px;">Valider votre adhésion</button>
         </div>
       </div>
 
@@ -714,9 +703,6 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
 // 2) Le code d'accès n'est plus stocké ici : il est saisi à l'écran et vérifié côté
 //    serveur (voir la constante SECRET dans Code.gs).
 const API_URL = "https://script.google.com/macros/s/AKfycbzAEyXUKCfOoUSr4bmJq_OBEpiIsYlPcICI8iCgdC7LU-k0UIOJaNmR63nEk0MUHuu3Aw/exec";
-// Doit correspondre exactement à MONTANT_COTISATION dans Code.gs.
-const MONTANT_COTISATION = 1000;
-document.getElementById('montant-label').textContent = 'Paiement de la cotisation (' + MONTANT_COTISATION + ' FCFA)';
 let sessionSecret = "ICAM2026";
 
 // ---------- TABS ----------
@@ -1023,13 +1009,12 @@ document.querySelectorAll('.step-prev').forEach(btn=>{
   });
 });
 
-// ---------- CONFIRMATION DIRECTE (paiement désactivé pour le moment) ----------
-document.getElementById('step4-next').addEventListener('click', async ()=>{
-  if(!validateStep(4)) return;
+// ---------- VALIDATION DE L'ADHÉSION (étape 5) ----------
+document.getElementById('valider-adhesion-btn').addEventListener('click', async ()=>{
   const record = buildPendingRecord();
   if(!record) return;
 
-  const btn = document.getElementById('step4-next');
+  const btn = document.getElementById('valider-adhesion-btn');
   btn.disabled = true; btn.textContent = 'Envoi en cours…';
 
   record.modePaiement = 'Gratuit';
@@ -1039,10 +1024,10 @@ document.getElementById('step4-next').addEventListener('click', async ()=>{
 
   await finalizeSubmission(record);
 
-  btn.disabled = false; btn.textContent = 'Confirmer et envoyer';
+  btn.disabled = false; btn.textContent = 'Valider votre adhésion';
 });
 
-// ---------- CONSTRUCTION DU DOSSIER (avant paiement) ----------
+// ---------- CONSTRUCTION DU DOSSIER ----------
 function buildPendingRecord(){
   const nom = document.getElementById('nom').value.trim().toUpperCase();
   const cni = document.getElementById('cni').value.trim();
@@ -1107,159 +1092,11 @@ async function finalizeSubmission(record){
     document.getElementById('form-card').style.display='none';
     document.getElementById('confirm-card').style.display='block';
   }catch(e){
-    errorEl.textContent = "Le paiement a été confirmé mais l'enregistrement a échoué (" + e.message + "). Ne repayez pas : contactez le responsable pour finaliser manuellement votre adhésion, référence de paiement : " + (record.referencePaiement || '—') + ".";
+    errorEl.textContent = "Une erreur est survenue lors de l'enregistrement (" + e.message + "). Réessayez, ou contactez le responsable si le problème persiste.";
     errorEl.style.display='block';
   }
 }
 
-// ---------- PAIEMENT WAVE ----------
-document.getElementById('pay-wave-btn').addEventListener('click', async ()=>{
-  const record = buildPendingRecord();
-  if(!record) return;
-  sessionStorage.setItem('pendingAdhesion', JSON.stringify(record));
-
-  const btn = document.getElementById('pay-wave-btn');
-  btn.disabled = true; btn.querySelector('.btn-label').textContent = 'Redirection vers Wave…';
-  const errorEl = document.getElementById('error-msg');
-  errorEl.style.display = 'none';
-
-  const baseUrl = window.location.origin + window.location.pathname;
-  const successUrl = baseUrl + '?payment=success&provider=wave&ref=' + encodeURIComponent(record.matricule);
-  const errorUrl = baseUrl + '?payment=cancelled&provider=wave';
-
-  try{
-    const res = await fetch(API_URL + '?action=createWavePayment&ref=' + encodeURIComponent(record.matricule) +
-      '&successUrl=' + encodeURIComponent(successUrl) + '&errorUrl=' + encodeURIComponent(errorUrl));
-    const data = await res.json();
-    if(!data || !data.ok || !data.launchUrl){
-      throw new Error(data && data.error ? data.error : 'Impossible de créer le paiement Wave.');
-    }
-    window.location.href = data.launchUrl;
-  }catch(e){
-    errorEl.textContent = 'Erreur lors de la création du paiement Wave : ' + e.message;
-    errorEl.style.display = 'block';
-    btn.disabled = false; btn.querySelector('.btn-label').textContent = 'Payer avec Wave';
-  }
-});
-
-// ---------- PAIEMENT ORANGE MONEY ----------
-document.getElementById('pay-orange-btn').addEventListener('click', async ()=>{
-  const record = buildPendingRecord();
-  if(!record) return;
-  sessionStorage.setItem('pendingAdhesion', JSON.stringify(record));
-
-  const btn = document.getElementById('pay-orange-btn');
-  btn.disabled = true; btn.querySelector('.btn-label').textContent = 'Redirection vers Orange Money…';
-  const errorEl = document.getElementById('error-msg');
-  errorEl.style.display = 'none';
-
-  const baseUrl = window.location.origin + window.location.pathname;
-  const successUrl = baseUrl + '?payment=success&provider=orange&ref=' + encodeURIComponent(record.matricule);
-  const errorUrl = baseUrl + '?payment=cancelled&provider=orange';
-
-  try{
-    const res = await fetch(API_URL + '?action=createOrangePayment&ref=' + encodeURIComponent(record.matricule) +
-      '&successUrl=' + encodeURIComponent(successUrl) + '&errorUrl=' + encodeURIComponent(errorUrl));
-    const data = await res.json();
-    if(!data || !data.ok || !data.launchUrl){
-      throw new Error(data && data.error ? data.error : 'Impossible de créer le paiement Orange Money.');
-    }
-    sessionStorage.setItem('pendingOrangePayToken', data.payToken || '');
-    window.location.href = data.launchUrl;
-  }catch(e){
-    errorEl.textContent = 'Erreur lors de la création du paiement Orange Money : ' + e.message;
-    errorEl.style.display = 'block';
-    btn.disabled = false; btn.querySelector('.btn-label').textContent = 'Payer avec Orange Money';
-  }
-});
-
-// ---------- ADHÉSION GRATUITE (sans paiement) ----------
-document.getElementById('pay-free-btn').addEventListener('click', async ()=>{
-  const record = buildPendingRecord();
-  if(!record) return;
-
-  const btn = document.getElementById('pay-free-btn');
-  btn.disabled = true; btn.textContent = 'Enregistrement en cours…';
-  document.getElementById('pay-wave-btn').disabled = true;
-  document.getElementById('pay-orange-btn').disabled = true;
-
-  record.modePaiement = 'Gratuit';
-  record.referencePaiement = 'N/A';
-  record.montantPaiement = 0;
-  record.statutPaiement = 'Gratuit';
-
-  await finalizeSubmission(record);
-
-  btn.disabled = false; btn.textContent = 'Adhésion gratuite (sans paiement)';
-  document.getElementById('pay-wave-btn').disabled = false;
-  document.getElementById('pay-orange-btn').disabled = false;
-});
-
-// ---------- RETOUR DE PAIEMENT (au chargement de la page) ----------
-(async function handlePaymentReturn(){
-  const params = new URLSearchParams(window.location.search);
-  const paymentState = params.get('payment');
-  if(!paymentState) return;
-
-  const provider = params.get('provider');
-  const pendingRaw = sessionStorage.getItem('pendingAdhesion');
-  const statusEl = document.getElementById('payment-status');
-  goToStep(5);
-
-  // Nettoie l'URL pour éviter de retraiter le retour de paiement à chaque rechargement.
-  window.history.replaceState({}, document.title, window.location.pathname);
-
-  if(paymentState === 'cancelled'){
-    statusEl.style.display = 'block';
-    statusEl.style.color = '#A23E34';
-    statusEl.textContent = 'Paiement annulé ou échoué. Vous pouvez réessayer.';
-    return;
-  }
-
-  if(paymentState !== 'success' || !pendingRaw){
-    return;
-  }
-
-  statusEl.style.display = 'block';
-  statusEl.style.color = 'var(--ink-soft)';
-  statusEl.textContent = 'Vérification du paiement en cours…';
-  document.getElementById('pay-wave-btn').disabled = true;
-  document.getElementById('pay-orange-btn').disabled = true;
-
-  try{
-    const record = JSON.parse(pendingRaw);
-    let verifyUrl;
-    if(provider === 'wave'){
-      const ref = params.get('ref') || record.matricule;
-      verifyUrl = API_URL + '?action=verifyPayment&provider=wave&session_id=' + encodeURIComponent(params.get('session_id') || ref);
-    }else if(provider === 'orange'){
-      const payToken = sessionStorage.getItem('pendingOrangePayToken') || '';
-      verifyUrl = API_URL + '?action=verifyPayment&provider=orange&pay_token=' + encodeURIComponent(payToken) + '&order_id=' + encodeURIComponent(record.matricule);
-    }else{
-      throw new Error('Fournisseur de paiement inconnu au retour.');
-    }
-
-    const res = await fetch(verifyUrl);
-    const data = await res.json();
-    if(!data || !data.ok || !data.paid){
-      throw new Error(data && data.error ? data.error : "Le paiement n'a pas pu être confirmé.");
-    }
-
-    record.modePaiement = provider === 'wave' ? 'Wave' : 'Orange Money';
-    record.referencePaiement = data.reference || params.get('ref') || record.matricule;
-    record.montantPaiement = MONTANT_COTISATION;
-    record.statutPaiement = 'Payé';
-
-    statusEl.textContent = 'Paiement confirmé — enregistrement de votre adhésion…';
-    await finalizeSubmission(record);
-    statusEl.style.display = 'none';
-  }catch(e){
-    statusEl.style.color = '#A23E34';
-    statusEl.textContent = 'Impossible de confirmer le paiement (' + e.message + "). Si le montant a été débité, contactez le responsable local sans repayer.";
-    document.getElementById('pay-wave-btn').disabled = false;
-    document.getElementById('pay-orange-btn').disabled = false;
-  }
-})();
 
 document.getElementById('new-entry-btn').addEventListener('click', ()=>{
   document.getElementById('nom').value='';
@@ -1282,14 +1119,10 @@ document.getElementById('new-entry-btn').addEventListener('click', ()=>{
   ctx.clearRect(0,0,canvas.width,canvas.height);
   hasSignature=false;
   document.getElementById('dup-warning').style.display='none';
-  document.getElementById('payment-status').style.display='none';
-  document.getElementById('pay-wave-btn').disabled = false;
-  document.getElementById('pay-wave-btn').textContent = 'Payer avec Wave';
-  document.getElementById('pay-orange-btn').disabled = false;
-  document.getElementById('pay-orange-btn').textContent = 'Payer avec Orange Money';
+  document.getElementById('valider-adhesion-btn').disabled = false;
+  document.getElementById('valider-adhesion-btn').textContent = 'Valider votre adhésion';
   goToStep(1);
   sessionStorage.removeItem('pendingAdhesion');
-  sessionStorage.removeItem('pendingOrangePayToken');
   document.getElementById('confirm-card').style.display='none';
   document.getElementById('form-card').style.display='block';
 });
