@@ -156,7 +156,7 @@
   }
   label:first-of-type{margin-top:0;}
   input[type=text],input[type=tel]{
-    width:100%;padding:11px 13px;border:1px solid var(--hairline);
+    width:100%;padding:11px 34px 11px 13px;border:1px solid var(--hairline);
     border-radius:9px;font-family:'Inter',sans-serif;font-size:14.5px;
     background:#FCFCFD;color:var(--ink);
     transition:border-color .18s, box-shadow .18s, background .18s;
@@ -164,6 +164,18 @@
   input:focus{
     outline:none;border-color:var(--accent);background:#fff;
     box-shadow:0 0 0 4px var(--accent-soft);
+  }
+  input.field-valid{border-color:var(--sn-green);}
+  input.field-invalid{border-color:var(--sn-red) !important;box-shadow:0 0 0 4px var(--sn-red-soft) !important;animation:shake .3s;}
+  @keyframes shake{
+    0%,100%{transform:translateX(0);}
+    25%{transform:translateX(-4px);}
+    75%{transform:translateX(4px);}
+  }
+  .field-check-wrap{position:relative;}
+  .field-check{
+    position:absolute;right:13px;top:50%;transform:translateY(-50%);
+    color:var(--sn-green);font-weight:700;font-size:15px;pointer-events:none;
   }
   .hint{font-size:11.5px;color:#7A8296;margin-top:5px;}
   input[type=file]{
@@ -205,6 +217,11 @@
     to{opacity:1;transform:translateY(0);}
   }
   .step-title{font-family:'Fraunces',serif;font-size:16px;font-weight:600;margin:0 0 14px;color:var(--ink);}
+  .welcome-box{
+    background:#FCFCFD;border:1px dashed var(--hairline);border-radius:10px;
+    padding:12px 14px;margin:0 0 18px;font-size:12.5px;color:var(--ink-soft);line-height:1.5;
+  }
+  .welcome-box p{margin:0;}
   .about-party{
     background:var(--sn-green-soft);border:1px solid rgba(0,133,63,0.25);border-radius:10px;
     padding:2px 14px;margin:0 0 18px;font-size:13px;color:var(--ink-soft);
@@ -549,7 +566,21 @@
       <p class="doc-title">Plate-forme Digitale d'adhésion en masse au Parti Tabax Construire</p>
       <p class="doc-sub">Merci de renseigner vos informations pour confirmer votre adhésion en masse au Parti Tabax Construire.</p>
       <div style="text-align:right;margin-top:-6px;">
+        <button type="button" id="text-size-btn" title="Agrandir le texte" style="background:none;border:none;color:#B7BDC9;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.04em;cursor:pointer;padding:4px;opacity:.55;transition:opacity .15s;margin-right:10px;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.55">A+ Agrandir</button>
         <button type="button" id="open-workspace-btn" style="background:none;border:none;color:#B7BDC9;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.04em;cursor:pointer;padding:4px;opacity:.55;transition:opacity .15s;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.55">Espace responsable</button>
+      </div>
+
+      <div class="welcome-box">
+        <p><b>Pourquoi ces informations ?</b> Elles servent uniquement à confirmer votre adhésion au parti, vous identifier comme militant auprès de votre comité local, et vous délivrer une carte de membre. Elles restent confidentielles et ne sont utilisées à aucune autre fin.</p>
+        <p class="hint" style="margin-top:6px;">⏱️ Ça prend environ 2 minutes, en 5 étapes courtes. Votre brouillon est sauvegardé automatiquement sur cet appareil si vous devez vous interrompre.</p>
+      </div>
+
+      <div id="draft-banner" style="display:none;align-items:center;justify-content:space-between;gap:10px;background:var(--accent-soft);border:1px solid var(--accent);border-radius:10px;padding:10px 14px;margin:0 0 18px;font-size:12.5px;color:#1B3B6B;">
+        <span>📝 Un brouillon précédent a été retrouvé et restauré sur cet appareil.</span>
+        <span style="display:flex;gap:8px;flex-shrink:0;">
+          <button type="button" id="draft-banner-clear" style="background:none;border:1px solid #1B3B6B;color:#1B3B6B;border-radius:6px;padding:3px 8px;font-size:11px;cursor:pointer;">Effacer</button>
+          <button type="button" id="draft-banner-close" style="background:none;border:none;color:#1B3B6B;cursor:pointer;font-size:14px;">✕</button>
+        </span>
       </div>
 
       <details class="about-party">
@@ -712,9 +743,10 @@
 
       <!-- ÉTAPE 5 — PAIEMENT -->
       <div class="form-step" data-step="5">
-        <p class="step-title">5. Validation de l'adhésion</p>
+        <p class="step-title">5. Vérifiez et validez</p>
 
-        <p class="hint">Vérifiez vos informations puis validez votre adhésion au Parti Tabax Construire.</p>
+        <p class="hint">Voici un dernier récapitulatif avant l'envoi — vérifiez que tout est correct.</p>
+        <div id="recap-box" class="welcome-box" style="background:#fff;"></div>
         <p class="error-msg" id="error-msg"></p>
 
         <div class="step-nav">
@@ -728,11 +760,16 @@
     <!-- CONFIRMATION (hidden until submit) -->
     <div class="card confirm" id="confirm-card" style="display:none;">
       <div class="stamp">✓</div>
-      <h2>Confirmation enregistrée</h2>
+      <h2>Merci, bienvenue au parti !</h2>
       <p id="confirm-subtitle" style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin:-4px 0 10px;">Parti Tabax Construire</p>
-      <p>Votre réponse a bien été transmise au responsable du comité.</p>
+      <p>Votre adhésion a bien été enregistrée. Merci de rejoindre le Parti Tabax Construire !</p>
       <div class="receipt" id="receipt"></div>
-      <button class="btn-primary" id="new-entry-btn" style="background:var(--accent-soft);color:#1B3B6B;">Nouvelle confirmation</button>
+      <div class="welcome-box" style="text-align:left;margin-top:16px;">
+        <p><b>Et maintenant ?</b></p>
+        <p>Votre responsable local prendra contact avec vous prochainement. Conservez ce reçu — il pourra vous être demandé lors des réunions du comité.</p>
+      </div>
+      <button type="button" class="btn-export" id="share-adhesion-btn" style="width:100%;margin-top:14px;">📤 Partager le formulaire à d'autres militants</button>
+      <button class="btn-primary" id="new-entry-btn" style="background:var(--accent-soft);color:#1B3B6B;margin-top:10px;">Nouvelle confirmation</button>
     </div>
   </div>
 
@@ -836,6 +873,102 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
 //    serveur (voir la constante SECRET dans Code.gs).
 const API_URL = "https://script.google.com/macros/s/AKfycbzAEyXUKCfOoUSr4bmJq_OBEpiIsYlPcICI8iCgdC7LU-k0UIOJaNmR63nEk0MUHuu3Aw/exec";
 let sessionSecret = "ICAM2026";
+
+// ---------- TAILLE DU TEXTE ----------
+(function tailleTexte(){
+  const btn = document.getElementById('text-size-btn');
+  let agrandi = localStorage.getItem('tabax_texte_agrandi') === '1';
+  function appliquer(){
+    document.documentElement.style.fontSize = agrandi ? '112%' : '';
+    btn.textContent = agrandi ? 'A- Réduire' : 'A+ Agrandir';
+  }
+  appliquer();
+  btn.addEventListener('click', ()=>{
+    agrandi = !agrandi;
+    localStorage.setItem('tabax_texte_agrandi', agrandi ? '1' : '0');
+    appliquer();
+  });
+})();
+
+// ---------- VALIDATION EN TEMPS RÉEL (coche verte) ----------
+(function validationTempsReel(){
+  const validateurs = {
+    'nom': v => v.trim().length >= 2,
+    'cni': v => /^\d{13}$/.test(v.trim()),
+    'quartier': v => v.trim().length >= 2,
+    'tel': v => /^\d{9}$/.test(v.trim()),
+    'carte-electeur': v => v.trim() === '' || /^\d{9}$/.test(v.trim()),
+    'commune-vote': v => v.trim().length >= 2,
+    'centre-vote': v => v.trim().length >= 2,
+    'bureau-vote': v => v.trim().length >= 1,
+    'responsable-local': v => v.trim().length >= 2
+  };
+  Object.keys(validateurs).forEach(id=>{
+    const input = document.getElementById(id);
+    if(!input) return;
+    const wrap = document.createElement('div');
+    wrap.className = 'field-check-wrap';
+    input.parentNode.insertBefore(wrap, input);
+    wrap.appendChild(input);
+    const check = document.createElement('span');
+    check.className = 'field-check';
+    check.textContent = '✓';
+    check.style.display = 'none';
+    wrap.appendChild(check);
+    function verifier(){
+      const ok = validateurs[id](input.value);
+      const rempli = input.value.trim() !== '';
+      check.style.display = (ok && rempli) ? 'inline' : 'none';
+      input.classList.toggle('field-valid', ok && rempli);
+    }
+    input.addEventListener('input', verifier);
+    verifier();
+  });
+})();
+
+// ---------- BROUILLON AUTOMATIQUE ----------
+const DRAFT_KEY = 'tabax_brouillon_adhesion';
+const DRAFT_FIELDS = ['nom','cni','carte-electeur','quartier','tel','commune-vote','centre-vote','bureau-vote','responsable-local'];
+function sauvegarderBrouillon(){
+  const data = {};
+  DRAFT_FIELDS.forEach(id=>{
+    const el = document.getElementById(id);
+    if(el) data[id] = el.value;
+  });
+  try{ localStorage.setItem(DRAFT_KEY, JSON.stringify(data)); }catch(e){}
+}
+function effacerBrouillon(){
+  try{ localStorage.removeItem(DRAFT_KEY); }catch(e){}
+}
+function restaurerBrouillon(){
+  let data;
+  try{ data = JSON.parse(localStorage.getItem(DRAFT_KEY) || 'null'); }catch(e){ data = null; }
+  if(!data) return;
+  const aDuContenu = DRAFT_FIELDS.some(id => data[id] && data[id].trim() !== '');
+  if(!aDuContenu) return;
+  DRAFT_FIELDS.forEach(id=>{
+    const el = document.getElementById(id);
+    if(el && data[id]){ el.value = data[id]; el.dispatchEvent(new Event('input')); }
+  });
+  const bandeau = document.getElementById('draft-banner');
+  if(bandeau) bandeau.style.display = 'flex';
+}
+DRAFT_FIELDS.forEach(id=>{
+  const el = document.getElementById(id);
+  if(el) el.addEventListener('input', sauvegarderBrouillon);
+});
+document.addEventListener('DOMContentLoaded', restaurerBrouillon);
+if(document.readyState !== 'loading') restaurerBrouillon();
+const draftCloseBtn = document.getElementById('draft-banner-close');
+if(draftCloseBtn) draftCloseBtn.addEventListener('click', ()=>{
+  document.getElementById('draft-banner').style.display = 'none';
+});
+const draftClearBtn = document.getElementById('draft-banner-clear');
+if(draftClearBtn) draftClearBtn.addEventListener('click', ()=>{
+  DRAFT_FIELDS.forEach(id=>{ const el = document.getElementById(id); if(el){ el.value=''; el.dispatchEvent(new Event('input')); } });
+  effacerBrouillon();
+  document.getElementById('draft-banner').style.display = 'none';
+});
 
 // ---------- TABS ----------
 function revealWorkspace(){
@@ -1157,7 +1290,32 @@ function goToStep(n){
     // il doit être redimensionné une fois réellement visible, sinon il reste à 0x0.
     setTimeout(resizeCanvas, 0);
   }
+  if(n === 5){
+    remplirRecap();
+  }
   document.getElementById('form-card').scrollIntoView({ behavior:'smooth', block:'start' });
+}
+
+function remplirRecap(){
+  const box = document.getElementById('recap-box');
+  if(!box) return;
+  const val = id => { const el = document.getElementById(id); return el ? escapeHtml(el.value.trim()) : ''; };
+  const accordEl = document.querySelector('input[name=accord]:checked');
+  box.innerHTML = `
+    <p><b>${val('nom') || '—'}</b> · CNI ${val('cni') || '—'}</p>
+    <p>${val('quartier') || '—'} · ${val('tel') || '—'}${val('carte-electeur') ? ' · Carte électeur ' + val('carte-electeur') : ''}</p>
+    <p>${val('commune-vote') || '—'} · ${val('centre-vote') || '—'} · Bureau ${val('bureau-vote') || '—'}</p>
+    <p>Responsable local : ${val('responsable-local') || '—'}</p>
+    <p>Adhésion : <b style="color:${accordEl ? '#3F6C51' : '#A23E34'};">${accordEl ? accordEl.value : 'non confirmée'}</b> ${hasSignature ? '· Signature ✓' : '· Signature manquante'}${photoDataUrl ? ' · Photo ✓' : ''}</p>
+  `;
+}
+
+function signalerChampInvalide(id){
+  const el = document.getElementById(id);
+  if(!el) return;
+  el.classList.add('field-invalid');
+  el.focus();
+  el.addEventListener('input', function retirer(){ el.classList.remove('field-invalid'); el.removeEventListener('input', retirer); });
 }
 
 function validateStep(n){
@@ -1173,18 +1331,24 @@ function validateStep(n){
     if(!nom || !cni || !quartier || !telephone){
       errEl.textContent = 'Merci de renseigner votre nom, votre CNI, votre quartier et votre téléphone avant de continuer.';
       errEl.style.display = 'block';
+      if(!nom) signalerChampInvalide('nom');
+      else if(!cni) signalerChampInvalide('cni');
+      else if(!quartier) signalerChampInvalide('quartier');
+      else signalerChampInvalide('tel');
       return false;
     }
     const cniDigits = cni.replace(/\D/g, '');
     if(cniDigits.length !== cni.length || cniDigits.length !== 13){
       errEl.textContent = 'Le numéro de CNI doit contenir exactement 13 chiffres.';
       errEl.style.display = 'block';
+      signalerChampInvalide('cni');
       return false;
     }
     const telDigits = telephone.replace(/\D/g, '');
     if(telDigits.length !== telephone.length || telDigits.length !== 9){
       errEl.textContent = 'Le numéro de téléphone doit contenir exactement 9 chiffres (ex : 771234567).';
       errEl.style.display = 'block';
+      signalerChampInvalide('tel');
       return false;
     }
     if(carteElecteur){
@@ -1192,6 +1356,7 @@ function validateStep(n){
       if(carteDigits.length !== carteElecteur.length || carteDigits.length !== 9){
         errEl.textContent = "Le numéro de carte d'électeur doit contenir exactement 9 chiffres.";
         errEl.style.display = 'block';
+        signalerChampInvalide('carte-electeur');
         return false;
       }
     }
@@ -1206,6 +1371,10 @@ function validateStep(n){
     if(!communeVote || !centreVote || !bureauVote || !responsableLocal){
       errEl2.textContent = 'Merci de renseigner votre commune, centre et bureau de vote ainsi que le responsable de votre comité avant de continuer.';
       errEl2.style.display = 'block';
+      if(!communeVote) signalerChampInvalide('commune-vote');
+      else if(!centreVote) signalerChampInvalide('centre-vote');
+      else if(!bureauVote) signalerChampInvalide('bureau-vote');
+      else signalerChampInvalide('responsable-local');
       return false;
     }
   }
@@ -1317,6 +1486,7 @@ async function finalizeSubmission(record){
       <div><span class="k">Date</span><span class="v">${new Date().toLocaleString('fr-FR')}</span></div>
     `;
     sessionStorage.removeItem('pendingAdhesion');
+    effacerBrouillon();
     document.getElementById('form-card').style.display='none';
     document.getElementById('confirm-card').style.display='block';
     playSonSucces();
@@ -1671,6 +1841,20 @@ function getAdhesionLink(){
   url.hash = '';
   return url.toString();
 }
+document.getElementById('share-adhesion-btn').addEventListener('click', async ()=>{
+  const link = getAdhesionLink();
+  const texte = "Rejoignez le Parti Tabax Construire ! Adhérez en ligne ici : " + link;
+  if(navigator.share){
+    try{ await navigator.share({ title: 'Parti Tabax Construire', text: texte, url: link }); return; }catch(e){ /* annulé ou échec : on retombe sur la copie */ }
+  }
+  try{
+    await navigator.clipboard.writeText(link);
+    const btn = document.getElementById('share-adhesion-btn');
+    const old = btn.textContent;
+    btn.textContent = 'Lien copié ✓';
+    setTimeout(()=> btn.textContent = old, 1800);
+  }catch(e){ /* ignore */ }
+});
 function buildQrDataURL(text, cellSize){
   const qr = qrcode(0, 'M');
   qr.addData(text);
